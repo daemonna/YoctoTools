@@ -30,8 +30,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Purpose : Yocto development toolkit installer
-# Usage : run without paramaters to see usage
+# Purpose : Yocto toolchain installer
+# Usage : run with --help
 #
 
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
@@ -69,7 +69,7 @@ build_toolchain() {
         bitbake meta-toolchain-sdk
     fi
     
-    #tar xvfjC tmp/deploy/sdk/poky-eglibc-x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
+    tar xvfjC tmp/deploy/sdk/poky-eglibc-* /   #x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
     
 }
 
@@ -87,7 +87,7 @@ build_toolchain() {
 #########################################################################################
 
 
-#process_parameters
+process_parameters
 build_toolchain
 
 exit $?
