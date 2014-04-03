@@ -146,6 +146,15 @@ install_nfs() {
 }
 
 
+install_all() {
+    install_essentials
+    install_graphical_extras
+    install_documentation
+    install_adt_extras
+    install_qemu
+    install_nfs
+}
+
 ##############################################
 # prepare essential folders and config files #
 ##############################################                                                                   
@@ -178,11 +187,19 @@ process_parameters() {
     case "$i" in
     --help) print_usage
         ;;
-    --install-qemu) HOST_INSTALL_QEMU="YES"
-        CLI_ARGS="${CLI_ARGS} --install-qemu" 
+    --install-all) install_all
         ;;
-    --install-nfs) HOST_INSTALL_NFS="YES"
-        CLI_ARGS="${CLI_ARGS} --install-nfs" 
+    --install-qemu) install_qemu
+        ;;
+    --install-nfs) install_nfs 
+        ;;
+    --install-essentials) install_essentials
+        ;;
+    --install-graphical_extras) install_graphical_extras
+        ;;
+    --install-documentation) install_documentation
+        ;;
+    --install-adt_extras) install_adt_extras
         ;;
     *) echo "invalid option!!!" 
         print_usage
