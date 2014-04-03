@@ -16,8 +16,22 @@ bitbake -c fetchall core-image-sato
 bitbake core-image-sato
 #runqemu qemux86
 
+#IMAGES
+#wget -O http://downloads.yoctoproject.org/releases/yocto/yocto-1.5.1/machines/qemu/
+
 #toolchain
 bitbake -c fetchall meta-toolchain-sdk
 bitbake meta-toolchain-sdk
 tar xvfjC tmp/deploy/sdk/poky-*
 
+
+
+#extract FS
+#cd ~
+#source /opt/poky/1.5.1/environment-setup-i586-poky-linux
+#runqemu-extract-sdk \
+#~/Downloads/core-image-sato-sdk-qemux86-2011091411831.rootfs.tar.bz2 $HOME/qemux86-sato
+
+#build toolchain
+#bitbake image -c populate_sdk
+#. This method has significant advantages over the previous method because it results in a toolchain installer that contains the sysroot that matches your target root filesystem.
