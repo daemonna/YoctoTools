@@ -38,7 +38,12 @@ DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
 BUILD="N"
 
 print_usage() {
-    echo -e "USAGE: --deployment-folder=\"path\" --build-yocto (to build it)"
+    echo -e "USAGE:"
+    echo -e " --deployment-folder=\"path\""
+    echo -e " --build-yocto (to build it)"
+    echo -e " --distros=\"distros\" (list distros in --deployment-folder)"
+    echo -e " --machines="
+    echo -e " --images"
 }
 
 process_parameters() {
@@ -52,6 +57,12 @@ process_parameters() {
     --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
         ;;
     --build-yocto) BUILD="Y" 
+        ;;
+    --distros=*) DISTROS="${i#*=}"
+        ;;
+    --machines=*) MACHINES="${i#*=}"
+        ;;
+    --images=*) IMAGES="${i#*=}"
         ;;
     *) echo "invalid option!!!" 
         print_usage
@@ -74,10 +85,10 @@ install_yocto() {
         mv poky-dora-10.0.1 poky
     fi
     
-    cd ${DEPLOYMENT_FOLDER}/poky
-    DISTROS=($(ls ${DEPLOYMENT_FOLDER}/poky/meta*/conf/distro/*.conf| grep 'conf/distro/' | cut -d '/' -f 5 | cut -d '.' -f 1))
-    MACHINES=($(ls ${DEPLOYMENT_FOLDER}/poky/meta*/conf/machine/*.conf| cut -d '/' -f 5 | cut -d '.' -f 1))
-    IMAGES=($(ls ${DEPLOYMENT_FOLDER}/poky/meta*/recipe*/images/*.bb |cut -d '/' -f 5 | cut -d '.' -f 1))
+    cd ${DEPLOYMENT_FOLDER}
+    DISTROS=($(ls poky/meta*/conf/distro/*.conf| grep 'conf/distro/' | cut -d '/' -f 5 | cut -d '.' -f 1))
+    MACHINES=($(ls poky/meta*/conf/machine/*.conf| cut -d '/' -f 5 | cut -d '.' -f 1))
+    IMAGES=($(ls poky/meta*/recipe*/images/*.bb |cut -d '/' -f 5 | cut -d '.' -f 1))
     echo -e "Found following"
     echo -e "DISTROS: ${DISTROS[@]}"
     echo -e "MACHINES: ${MACHINES[@]}"
@@ -89,12 +100,12 @@ build_yocto() {
     cd ${DEPLOYMENT_FOLDER}
     source poky/oe-init-build-env
     echo -e "ALTERING conf/local.conf... in $(pwd)"
-    sed -i "s/MACHINE ??= \"qemux86\"/MACHINE ??= \"qemuarm\"/g" conf/local.conf
+    sed -i "s/MACHINE ??= \"qemux86\"/MACHINE ??= \"${MACHINES[@]}\"/g" conf/local.conf
     sed -i "s/#BB_NUMBER_THREADS ?= \"4\"/BB_NUMBER_THREADS ?= \"$(cat /proc/cpuinfo |grep processor|wc -l)\"/g" conf/local.conf
     sed -i "s/#PARALLEL_MAKE ?= \"4\"/PARALLEL_MAKE ?= \"$(cat /proc/cpuinfo |grep processor|wc -l)\"/g" conf/local.conf
-    bitbake -c fetchall core-image-sato
-    bitbake core-image-sato
-    echo -e "type runqemu qemuarm to run emulator"
+    bitbake -c fetchall ${IMAGES[@]}
+    bitbake ${IMAGES[@]}
+    echo -e "type runqemu ${MACHINES[@]} to run emulator"
 }
 
 
