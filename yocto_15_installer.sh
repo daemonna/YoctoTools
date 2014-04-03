@@ -30,8 +30,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Purpose : Yocto development toolkit installer
-# Usage : run without paramaters to see usage
+# Purpose : Yocto installer
+# Usage : run with --help paramater
 #
 
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
