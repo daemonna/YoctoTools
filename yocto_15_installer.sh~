@@ -75,7 +75,6 @@ install_yocto() {
 }
 
 deploy_yocto() {
-    cd ${DEPLOYMENT_FOLDER}
     source poky/oe-init-build-env
     echo -e "ALTERING conf/local.conf... in $(pwd)"
     sed -i "s/MACHINE ??= \"qemux86\"/MACHINE ??= \"qemuarm\"/g" conf/local.conf

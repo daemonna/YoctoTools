@@ -36,6 +36,10 @@
 
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
 
+print_usage() {
+    echo -e "USAGE: $0 --deployment-folder=\"path\""
+}
+
 process_parameters() {
     # process parameters
     echo "processing paramaters"
@@ -44,11 +48,7 @@ process_parameters() {
     case "$i" in
     --help) print_usage
         ;;
-    --install-qemu) HOST_INSTALL_QEMU="YES"
-        CLI_ARGS="${CLI_ARGS} --install-qemu" 
-        ;;
-    --install-nfs) HOST_INSTALL_NFS="YES"
-        CLI_ARGS="${CLI_ARGS} --install-nfs" 
+    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
         ;;
     *) echo "invalid option!!!" 
         print_usage
@@ -58,33 +58,21 @@ process_parameters() {
 }
 
 
-install_yocto() {
+build_toolchain() {
 
     if [[ -d ${DEPLOYMENT_FOLDER} ]];then
         echo -e "skipping download... folder already exist"
     else
-        rm -rf ${DEPLOYMENT_FOLDER}
-        mkdir ${DEPLOYMENT_FOLDER}
-        wget -O ${DEPLOYMENT_FOLDER}/poky-dora-10.0.1.tar.bz2 http://downloads.yoctoproject.org/releases/yocto/yocto-1.5.1/poky-dora-10.0.1.tar.bz2
         cd ${DEPLOYMENT_FOLDER}
-        tar -vxjf poky-dora-10.0.1.tar.bz2
-        mv poky-dora-10.0.1 poky
+        source poky/oe-init-build-env
+        bitbake -c fetchall meta-toolchain-sdk
+        bitbake meta-toolchain-sdk
     fi
     
+    #tar xvfjC tmp/deploy/sdk/poky-eglibc-x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
     
 }
 
-deploy_yocto() {
-    cd ${DEPLOYMENT_FOLDER}
-    source poky/oe-init-build-env
-    echo -e "ALTERING conf/local.conf... in $(pwd)"
-    sed -i "s/MACHINE ??= \"qemux86\"/MACHINE ??= \"qemuarm\"/g" conf/local.conf
-    sed -i "s/#BB_NUMBER_THREADS ?= \"4\"/BB_NUMBER_THREADS ?= \"$(cat /proc/cpuinfo |grep processor|wc -l)\"/g" conf/local.conf
-    sed -i "s/#PARALLEL_MAKE ?= \"4\"/PARALLEL_MAKE ?= \"$(cat /proc/cpuinfo |grep processor|wc -l)\"/g" conf/local.conf
-    bitbake -c fetchall core-image-sato
-    bitbake core-image-sato
-    echo -e "type runqemu qemuarm to run emulator"
-}
 
 
 
@@ -100,7 +88,6 @@ deploy_yocto() {
 
 
 #process_parameters
-install_yocto
-deploy_yocto
+build_toolchain
 
 exit $?
