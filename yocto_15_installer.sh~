@@ -109,19 +109,17 @@ build_yocto() {
 }
 
 
-
-
-
-
-
+print_banner() {
+    echo -e "Yocto 1.5.1 Installer"
+}
 
 #########################################################################################
 #                                                                                       #
 # MAIN FUNCTION                                                                         #
 #########################################################################################
 
-
-#process_parameters
+print_banner
+process_parameters
 install_yocto
 if [[ "${BUILD}" == "Y" ]];then
     build_yocto

@@ -43,7 +43,7 @@ print_usage() {
     echo -e " --build-yocto (to build it)"
     echo -e " --distros=\"distros\" (list distros in --deployment-folder)"
     echo -e " --machines="
-    echo -e " --images"
+    echo -e " --images="
 }
 
 process_parameters() {
@@ -109,19 +109,17 @@ build_yocto() {
 }
 
 
-
-
-
-
-
+print_banner() {
+    echo -e "Yocto 1.5.1 Installer"
+}
 
 #########################################################################################
 #                                                                                       #
 # MAIN FUNCTION                                                                         #
 #########################################################################################
 
-
-#process_parameters
+print_banner
+process_parameters
 install_yocto
 if [[ "${BUILD}" == "Y" ]];then
     build_yocto
