@@ -74,10 +74,10 @@ install_yocto() {
         mv poky-dora-10.0.1 poky
     fi
     
-    cd ${DEPLOYMENT_FOLDER}
-    DISTROS=($(ls poky/meta*/conf/distro/*.conf| grep 'conf/distro/' | cut -d '/' -f 5 | cut -d '.' -f 1))
-    MACHINES=($(ls poky/meta*/conf/machine/*.conf| cut -d '/' -f 5 | cut -d '.' -f 1))
-    IMAGES=($(ls poky/meta*/recipe*/images/*.bb |cut -d '/' -f 5 | cut -d '.' -f 1))
+    cd ${DEPLOYMENT_FOLDER}/poky
+    DISTROS=($(ls ${DEPLOYMENT_FOLDER}/poky/meta*/conf/distro/*.conf| grep 'conf/distro/' | cut -d '/' -f 5 | cut -d '.' -f 1))
+    MACHINES=($(ls ${DEPLOYMENT_FOLDER}/poky/meta*/conf/machine/*.conf| cut -d '/' -f 5 | cut -d '.' -f 1))
+    IMAGES=($(ls ${DEPLOYMENT_FOLDER}/poky/meta*/recipe*/images/*.bb |cut -d '/' -f 5 | cut -d '.' -f 1))
     echo -e "Found following"
     echo -e "DISTROS: ${DISTROS[@]}"
     echo -e "MACHINES: ${MACHINES[@]}"
