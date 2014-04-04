@@ -255,8 +255,6 @@ print_banner() {
 get_distro
 print_banner
 prepare_essentials
-#process_parameters
-install_all
-
+process_parameters
 
 exit $?
