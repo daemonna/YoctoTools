@@ -48,7 +48,11 @@ process_parameters() {
     case "$i" in
     --help) print_usage
         ;;
-    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
+    --add-project=*) DEPLOYMENT_FOLDER="${i#*=}"
+        ;;
+    --delete-project=*) echo "deleting project"
+        ;;
+    --recompile-project=*) echo "recomp"
         ;;
     *) echo "invalid option!!!" 
         print_usage
