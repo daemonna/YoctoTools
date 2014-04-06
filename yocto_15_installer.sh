@@ -37,41 +37,23 @@
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
 BUILD="N"
 
+
+#####################
+# Usage   #
+###########
 print_usage() {
     echo -e "USAGE:"
     echo -e " --deployment-folder=\"path\""
     echo -e " --build-yocto (to build it)"
-    echo -e " --distros=\"distros\" (list distros in --deployment-folder)"
-    echo -e " --machines="
-    echo -e " --images="
-}
-
-process_parameters() {
-    # process parameters
-    echo "processing paramaters"
-    for i in "$@"
-    do
-    case "$i" in
-    --help) print_usage
-        ;;
-    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
-        ;;
-    --build-yocto) BUILD="Y" 
-        ;;
-    --distros=*) DISTROS="${i#*=}"
-        ;;
-    --machines=*) MACHINES="${i#*=}"
-        ;;
-    --images=*) IMAGES="${i#*=}"
-        ;;
-    *) echo "invalid option!!!" 
-        print_usage
-        ;;
-    esac
-    done
+    echo -e " --distros=\"distros\""
+    echo -e " --machines=\"machines\""
+    echo -e " --images=\"images\""
 }
 
 
+#########################################
+# download and install/build Yocto      #
+#########################################
 install_yocto() {
 
     if [[ -d ${DEPLOYMENT_FOLDER} ]];then
@@ -119,7 +101,28 @@ print_banner() {
 #########################################################################################
 
 print_banner
-process_parameters
+
+for i in "$@"
+do
+case $i in
+    --help) print_usage
+        ;;
+    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
+        ;;
+    --build-yocto) BUILD="Y" 
+        ;;
+    --distros=*) DISTROS="${i#*=}"
+        ;;
+    --machines=*) MACHINES="${i#*=}"
+        ;;
+    --images=*) IMAGES="${i#*=}"
+        ;;
+    *) echo "invalid option!!!" 
+        print_usage
+        ;;
+esac
+done
+
 install_yocto
 if [[ "${BUILD}" == "Y" ]];then
     build_yocto
