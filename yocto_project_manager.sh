@@ -30,58 +30,71 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Purpose : Yocto toolchain installer
+# Purpose : Yocto project management 
 # Usage : run with --help
 #
 
+
+PROJECTS_name=()
+PROJECTS_path=()
+CLI_Project_name=""
+CLI_Project_path=""
+NOW=$(date +"%s-%d-%m-%Y")
+Project_name_file="${HOME}/.yocto_management/projects_names"
+Project_path_file="${HOME}/.yocto_management/projects_paths"
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment-toolchain"
 
-print_usage() {
-    echo -e "USAGE: $0 --deployment-folder=\"path\""
-}
-
-process_parameters() {
-    # process parameters
-    echo "processing paramaters"
-    for i in "$@"
-    do
-    case "$i" in
-    --help) print_usage
-        ;;
-    --add-project=*) DEPLOYMENT_FOLDER="${i#*=}"
-        ;;
-    --delete-project=*) echo "deleting project"
-        ;;
-    --recompile-project=*) echo "recomp"
-        ;;
-    *) echo "invalid option!!!" 
-        print_usage
-        ;;
-    esac
-    done
-}
-
-
-build_toolchain() {
-
-    if [[ ! -d ${DEPLOYMENT_FOLDER} ]];then
-        echo -e "ERROR.. deployment folder doesn\'t exist!"
+health_check() {
+    if [[ -d ${DEPLOYMENT_FOLDER} ]];then
+        echo -e "DEPLOYMENT_FOLDER OK"
     else
-        cd ${DEPLOYMENT_FOLDER}
-        source poky/oe-init-build-env
-        bitbake -c fetchall meta-toolchain-sdk
-        bitbake meta-toolchain-sdk
+        echo -e "DEPLOYMENT_FOLDER error.. please specify path to Yocto deployment."
     fi
     
-    tar xvfjC tmp/deploy/sdk/poky-eglibc-* /   #x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
+    if [[ -f ${Project_name_file} ]];then
+        echo -e "Project_name_file OK"
+    else
+        echo -e "Project_name_file error.. recreating."
+        echo -e "#project file, generated on ${NOW}" >> ${Project_name_file}
+    fi
     
+    if [[ -d ${Project_path_file} ]];then
+        echo -e "Project_path_file OK"
+    else
+        echo -e "Project_path_file error.. recreating."
+        echo -e "#project file, generated on ${NOW}" >> ${Project_path_file}
+    fi
+}
+
+print_usage() {
+    echo -e "USAGE:"
+    echo -e "--help"
+    echo -e "--list-projects"
+    echo -e "--project-name=*"
+    echo -e "--project-path=*"
+    echo -e "--add-project=*"
+    echo -e "--remove-project=*"
+    echo -e "--recompile-project=*"
 }
 
 
 
+list_projects() {
+    echo -e "[list_projects]"
+    cat ${Project_path_file}
+}
 
+add_project() {
+    echo -e "[add_project]"
+}
 
+remove_project() {
+    echo -e "[remove_project]"
+}
 
+recompile_project() {
+    echo -e "[recompile_project]"
+}
 
 
 
@@ -90,8 +103,31 @@ build_toolchain() {
 # MAIN FUNCTION                                                                         #
 #########################################################################################
 
+health_check
 
-process_parameters
-build_toolchain
+for i in "$@"
+do
+case $i in
+    --help) print_usage
+        ;;
+    --list-projects) list_projects
+        ;;
+    --project-name=*) CLI_Project_name="${i#*=}"
+        ;;
+    --project-path=*) CLI_Project_path="${i#*=}"
+        ;;
+    --add-project=*) add_project "${i#*=}"
+        ;;
+    --remove-project=*) remove_project "${i#*=}"
+        ;;
+    --recompile-project=*) recompile_project "${i#*=}"
+        ;;
+    *) echo "invalid option ${i}!!!" 
+        print_usage
+        exit 1
+        ;;
+esac
+done
+
 
 exit $?
