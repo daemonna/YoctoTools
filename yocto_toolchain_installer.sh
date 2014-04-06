@@ -34,31 +34,38 @@
 # Usage : run with --help
 #
 
+######################################################################
+#                                                                    #
+# GLOBAL VALUES                                                      #
+######################################################################
+
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment-toolchain"
+TOOLCHAIN_list=()
+
+
+
+
+#######################################################################
+#                                                                     #
+# FUNCTIONS                                                           #
+#######################################################################
+
 
 print_usage() {
-    echo -e "USAGE: $0 --deployment-folder=\"path\""
-}
-
-process_parameters() {
-    # process parameters
-    echo "processing paramaters"
-    for i in "$@"
-    do
-    case "$i" in
-    --help) print_usage
-        ;;
-    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
-        ;;
-    *) echo "invalid option!!!" 
-        print_usage
-        ;;
-    esac
-    done
+    echo -e "USAGE:"
+    echo -e "--help"
+    echo -e "--list-projects"
+    echo -e "--project-name=*"
+    echo -e "--project-path=*"
+    echo -e "--add-project=*"
+    echo -e "--remove-project=*"
+    echo -e "--recompile-project=*"
 }
 
 
-build_toolchain() {
+
+
+rebuild_toolchain() {
 
     if [[ ! -d ${DEPLOYMENT_FOLDER} ]];then
         echo -e "ERROR.. deployment folder doesn\'t exist!"
@@ -87,7 +94,26 @@ build_toolchain() {
 #########################################################################################
 
 
-process_parameters
-build_toolchain
+health_check
+
+for i in "$@"
+do
+case $i in
+    --help) print_usage
+        ;;
+    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
+        ;;
+    --rebuild-toolchain) CLI_Project_name="${i#*=}"
+        ;;
+    --list-toolchains) CLI_Project_path="${i#*=}"
+        ;;
+    --add-project=*) add_project "${i#*=}"
+        ;;
+    *) echo "invalid option ${i}!!!" 
+        print_usage
+        exit 1
+        ;;
+esac
+done
 
 exit $?
