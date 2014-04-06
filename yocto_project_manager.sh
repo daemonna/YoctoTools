@@ -77,6 +77,7 @@ print_usage() {
     echo -e "--recompile-project=*"
     echo -e "--setup-ssh"
     echo -e "--update-packages=* [path to library to update]"
+    echo -e "--setup_environment"
 }
 
 
@@ -98,6 +99,11 @@ recompile_project() {
     echo -e "[recompile_project] $1"
 }
 
+setup_environment() {
+    echo -e "[setup_environment]"
+    bash ${YOCTO_FOLDER}/environment-setup-${ARCH}-poky-linux
+}
+
 setup_ssh() {
     echo -e "[setup_ssh]"
     #meta/recipes-core/images/core-image-minimal.bb
@@ -112,6 +118,13 @@ update_packages() {
     #--force-overwrite install ${some_lib}
 }
 
+install_yocto() {
+    echo -e "[install_yocto]"
+}
+
+install_toolchain() {
+    echo -e "[install_toolchain]"
+}
 
 #########################################################################################
 #                                                                                       #
@@ -138,6 +151,12 @@ case $i in
     --recompile-project=*) recompile_project "${i#*=}"
         ;;
     --update-packages=*) update_packages "${i#*=}"
+        ;;
+    --setup-environment=*) setup_environment "${i#*=}"
+        ;;
+    --install-yocto=*) install_yocto "${i#*=}"
+        ;;
+    --install-toolchain) install_toolchain
         ;;
     *) echo "invalid option ${i}!!!" 
         print_usage

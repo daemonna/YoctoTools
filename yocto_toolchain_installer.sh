@@ -39,6 +39,8 @@
 # GLOBAL VALUES                                                      #
 ######################################################################
 
+YOCTO_FOLDER="${HOME}/YoctoDeployment/poky"
+YOCTO_BUILD_FOLDER="${HOME}/YoctoDeployment/build"
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment-toolchain"
 TOOLCHAIN_list=()
 ARCH="i586"
@@ -60,29 +62,36 @@ print_usage() {
     echo -e "--add-project=*"
     echo -e "--remove-project=*"
     echo -e "--recompile-project=*"
+    echo -e "--yocto-folder=*"
 }
 
 
 
-
+# By default, this toolchain does not build static binaries.
+# use IMAGE_INSTALL_append = " somelib-staticdev"
 rebuild_toolchain() {
-
-    if [[ ! -d ${DEPLOYMENT_FOLDER} ]];then
+    
+    if [[ ! -d ${YOCTO_FOLDER} ]];then
         echo -e "ERROR.. deployment folder doesn\'t exist!"
     else
-        cd ${DEPLOYMENT_FOLDER}
+        cd ../${YOCTO_FOLDER}
         source poky/oe-init-build-env
-        bitbake -c fetchall meta-toolchain-sdk
-        bitbake meta-toolchain-sdk
+        #This method has significant advantages over the previous method because it results in a toolchain installer
+        # that contains the sysroot that matches your target root filesystem.
+        bitbake image -c populate_sdk
     fi
-    
-    tar xvfjC tmp/deploy/sdk/poky-eglibc-* /   #x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
-    
+    untar_toolchain
+}
+
+
+untar_toolchain() {
+    cd ${YOCTO_BUILD_FOLDER}
+    tar xvfjC tmp/deploy/sdk/poky-eglibc-* ${DEPLOYMENT_FOLDER}/   #x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
 }
 
 # Source the cross-toolchain environment setup file
 source_cross_toolchain() {
-    source /opt/poky/1.5.1/environment-setup-${ARCH}-poky-linux
+    source environment-setup-${ARCH}-poky-linux
 }
 
 
@@ -105,6 +114,7 @@ do
 case $i in
     --help) print_usage
         ;;
+    --yocto-folder=*) YOCTO_FOLDER="${i#*=}"
     --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
         ;;
     --rebuild-toolchain) CLI_Project_name="${i#*=}"
