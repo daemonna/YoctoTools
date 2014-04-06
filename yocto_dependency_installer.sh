@@ -212,16 +212,35 @@ prepare_essentials() {
 }
 
 
+print_banner() {
+    echo -e "Yocto dependency installer 0.1 (${HOST_DISTRO})"
+}
 
-process_parameters() {
-    # process parameters
-    echo "processing paramaters $@"
-    for i in "$@"
-    do
-    case "$i" in
+print_usage() {
+    echo -e "USAGE:"
+    echo -e "--help"
+    echo -e "--install-all"
+    echo -e "--install-qemu"
+    echo -e "--install-nfs"
+    echo -e "--install-essentials"
+    echo -e "--install-graphical_extras"
+    echo -e "--install-documentation"
+    echo -e "--install-adt-extras"
+}
+
+#########################################################################################
+#                                                                                       #
+# MAIN FUNCTION                                                                         #
+#########################################################################################
+
+
+
+for i in "$@"
+do
+case $i in
     --help) print_usage
         ;;
-    "--install-all") install_all
+    --install-all) install_all
         ;;
     --install-qemu) install_qemu
         ;;
@@ -233,29 +252,18 @@ process_parameters() {
         ;;
     --install-documentation) install_documentation
         ;;
-    --install-adt_extras) install_adt_extras
+    --install-adt-extras) install_adt_extras
         ;;
-    *) echo "invalid option!!!" 
+    *) echo "invalid option ${i}!!!" 
         print_usage
+        exit 1
         ;;
-    esac
-    done
-}
-
-
-print_banner() {
-    echo -e "Yocto dependency installer 0.1 (${HOST_DISTRO})"
-}
-
-#########################################################################################
-#                                                                                       #
-# MAIN FUNCTION                                                                         #
-#########################################################################################
+esac
+done
 
 get_distro
 print_banner
-prepare_essentials
-#process_parameters
+#prepare_essentials
 install_all
 
 
