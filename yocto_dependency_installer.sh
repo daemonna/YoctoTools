@@ -180,6 +180,9 @@ install_nfs() {
 }
 
 
+########################
+# install everything   #
+########################
 install_all() {
     install_essentials
     install_graphical_extras
@@ -234,6 +237,9 @@ print_usage() {
 #########################################################################################
 
 
+get_distro
+print_banner
+prepare_essentials
 
 for i in "$@"
 do
@@ -260,11 +266,6 @@ case $i in
         ;;
 esac
 done
-
-get_distro
-print_banner
-#prepare_essentials
-install_all
 
 
 exit $?
