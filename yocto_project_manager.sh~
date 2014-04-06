@@ -30,26 +30,41 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Purpose : Yocto toolchain installer
+# Purpose : Yocto project management 
 # Usage : run with --help
 #
 
-######################################################################
-#                                                                    #
-# GLOBAL VALUES                                                      #
-######################################################################
 
+PROJECTS_name=()
+PROJECTS_path=()
+CLI_Project_name=""
+CLI_Project_path=""
+NOW=$(date +"%s-%d-%m-%Y")
+Project_name_file="${HOME}/.yocto_management/projects_names"
+Project_path_file="${HOME}/.yocto_management/projects_paths"
 DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment-toolchain"
-TOOLCHAIN_list=()
-ARCH="i586"
 
-
-
-#######################################################################
-#                                                                     #
-# FUNCTIONS                                                           #
-#######################################################################
-
+health_check() {
+    if [[ -d ${DEPLOYMENT_FOLDER} ]];then
+        echo -e "DEPLOYMENT_FOLDER OK"
+    else
+        echo -e "DEPLOYMENT_FOLDER error.. please specify path to Yocto deployment."
+    fi
+    
+    if [[ -f ${Project_name_file} ]];then
+        echo -e "Project_name_file OK"
+    else
+        echo -e "Project_name_file error.. recreating."
+        echo -e "#project file, generated on ${NOW}" >> ${Project_name_file}
+    fi
+    
+    if [[ -d ${Project_path_file} ]];then
+        echo -e "Project_path_file OK"
+    else
+        echo -e "Project_path_file error.. recreating."
+        echo -e "#project file, generated on ${NOW}" >> ${Project_path_file}
+    fi
+}
 
 print_usage() {
     echo -e "USAGE:"
@@ -60,43 +75,48 @@ print_usage() {
     echo -e "--add-project=*"
     echo -e "--remove-project=*"
     echo -e "--recompile-project=*"
+    echo -e "--setup-ssh"
+    echo -e "--update-packages=* [path to library to update]"
 }
 
 
 
-
-rebuild_toolchain() {
-
-    if [[ ! -d ${DEPLOYMENT_FOLDER} ]];then
-        echo -e "ERROR.. deployment folder doesn\'t exist!"
-    else
-        cd ${DEPLOYMENT_FOLDER}
-        source poky/oe-init-build-env
-        bitbake -c fetchall meta-toolchain-sdk
-        bitbake meta-toolchain-sdk
-    fi
-    
-    tar xvfjC tmp/deploy/sdk/poky-eglibc-* /   #x86_64-arm-toolchain-gmae-1.2.tar.bz2 /   
-    
+list_projects() {
+    echo -e "[list_projects]"
+    cat ${Project_path_file}
 }
 
-# Source the cross-toolchain environment setup file
-source_cross_toolchain() {
-    source /opt/poky/1.5.1/environment-setup-${ARCH}-poky-linux
+add_project() {
+    echo -e "[add_project]"
 }
 
+remove_project() {
+    echo -e "[remove_project]"
+}
 
+recompile_project() {
+    echo -e "[recompile_project]"
+}
 
+setup_ssh() {
+    echo -e "[setup_ssh]"
+    #meta/recipes-core/images/core-image-minimal.bb
+    #meta/recipes-connectivity/openssh/openssh_6.2p2.bb
+}
 
-
-
+update_packages() {
+    echo -e "[update_packages]"
+    #bitbake ${some_lib}
+    #opkg-cl –f <conf_file> -o <sysroot_dir> update
+    #opkg-cl –f <cconf_file> -o <sysroot_dir> \
+    #--force-overwrite install ${some_lib}
+}
 
 
 #########################################################################################
 #                                                                                       #
 # MAIN FUNCTION                                                                         #
 #########################################################################################
-
 
 health_check
 
@@ -105,11 +125,19 @@ do
 case $i in
     --help) print_usage
         ;;
-    --deployment-folder=*) DEPLOYMENT_FOLDER="${i#*=}"
+    --list-projects) list_projects
         ;;
-    --rebuild-toolchain) CLI_Project_name="${i#*=}"
+    --project-name=*) CLI_Project_name="${i#*=}"
         ;;
-    --list-toolchains) CLI_Project_path="${i#*=}"
+    --project-path=*) CLI_Project_path="${i#*=}"
+        ;;
+    --add-project=*) add_project "${i#*=}"
+        ;;
+    --remove-project=*) remove_project "${i#*=}"
+        ;;
+    --recompile-project=*) recompile_project "${i#*=}"
+        ;;
+    --update-packages=*) update_packages "${i#*=}"
         ;;
     *) echo "invalid option ${i}!!!" 
         print_usage
@@ -117,5 +145,6 @@ case $i in
         ;;
 esac
 done
+
 
 exit $?

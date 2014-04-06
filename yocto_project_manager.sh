@@ -75,6 +75,8 @@ print_usage() {
     echo -e "--add-project=*"
     echo -e "--remove-project=*"
     echo -e "--recompile-project=*"
+    echo -e "--setup-ssh"
+    echo -e "--update-packages=* [path to library to update]"
 }
 
 
@@ -93,9 +95,22 @@ remove_project() {
 }
 
 recompile_project() {
-    echo -e "[recompile_project]"
+    echo -e "[recompile_project] $1"
 }
 
+setup_ssh() {
+    echo -e "[setup_ssh]"
+    #meta/recipes-core/images/core-image-minimal.bb
+    #meta/recipes-connectivity/openssh/openssh_6.2p2.bb
+}
+
+update_packages() {
+    echo -e "[update_packages] $1"
+    #bitbake ${some_lib}
+    #opkg-cl –f <conf_file> -o <sysroot_dir> update
+    #opkg-cl –f <cconf_file> -o <sysroot_dir> \
+    #--force-overwrite install ${some_lib}
+}
 
 
 #########################################################################################
@@ -121,6 +136,8 @@ case $i in
     --remove-project=*) remove_project "${i#*=}"
         ;;
     --recompile-project=*) recompile_project "${i#*=}"
+        ;;
+    --update-packages=*) update_packages "${i#*=}"
         ;;
     *) echo "invalid option ${i}!!!" 
         print_usage
