@@ -34,8 +34,12 @@
 # Usage : run with --help paramater
 #
 
-DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
 BUILD="N"
+DEPLOYMENT_FOLDER="${HOME}/YoctoDeployment"
+MACHINES=('qemux86')
+IMAGES=('core-image-sato')
+DISTROS=('poky')
+
 
 
 #####################
@@ -45,9 +49,9 @@ print_usage() {
     echo -e "USAGE:"
     echo -e " --deployment-folder=\"path\""
     echo -e " --build-yocto (to build it)"
-    echo -e " --distros=\"distros\""
-    echo -e " --machines=\"machines\""
-    echo -e " --images=\"images\""
+    echo -e " --distro=\"distro\""
+    echo -e " --machine=\"machine\""
+    echo -e " --image=\"image\""
 }
 
 
@@ -68,18 +72,16 @@ install_yocto() {
     fi
     
     cd ${DEPLOYMENT_FOLDER}
-    DISTROS=($(ls poky/meta*/conf/distro/*.conf| grep 'conf/distro/' | cut -d '/' -f 5 | cut -d '.' -f 1))
-    MACHINES=($(ls poky/meta*/conf/machine/*.conf| cut -d '/' -f 5 | cut -d '.' -f 1))
-    IMAGES=($(ls poky/meta*/recipe*/images/*.bb |cut -d '/' -f 5 | cut -d '.' -f 1))
+
+    echo -e "Found following"
+    echo -e "DISTROS: $(ls poky/meta*/conf/distro/*.conf| grep 'conf/distro/' | cut -d '/' -f 5 | cut -d '.' -f 1)"
+    echo -e "MACHINES: $(ls poky/meta*/conf/machine/*.conf| cut -d '/' -f 5 | cut -d '.' -f 1)"
+    echo -e "IMAGES: $(ls poky/meta*/recipe*/images/*.bb |cut -d '/' -f 5 | cut -d '.' -f 1)"   
+    echo -e "BUT DEFAULT VALUES CURRENTLY ARE:"
     echo -e "Found following"
     echo -e "DISTROS: ${DISTROS[@]}"
     echo -e "MACHINES: ${MACHINES[@]}"
-    echo -e "IMAGES: ${IMAGES[@]}"
-    
-    echo -e "setting MACHINE to qemux86"
-    MACHINES=('qemux86')
-    echo -e "setting IMAGE to core-image-sato"
-    IMAGES=('core-image-sato')
+    echo -e "IMAGES: ${IMAGES[@]}"  
     
     echo -e "\n\nRun $0 with --build-yocto"
     
