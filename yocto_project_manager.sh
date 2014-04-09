@@ -72,7 +72,7 @@ print_usage() {
     echo -e "--list-projects"
     echo -e "--project-name=*"
     echo -e "--project-path=*"
-    echo -e "--add-project=*"
+    echo -e "--add-project [use only with --project-name and --project-path]"
     echo -e "--remove-project=*"
     echo -e "--recompile-project=*"
     echo -e "--setup-ssh"
@@ -84,11 +84,20 @@ print_usage() {
 
 list_projects() {
     echo -e "[list_projects]"
-    cat ${Project_path_file}
+    cat ${Project_name_file}
 }
 
+
+#
+# Parameters:
+#   CLI_Project_name
+#   CLI_Project_path
+#
 add_project() {
-    echo -e "[add_project]"
+    echo -e "[add_project] $1 $2"
+    #TODO check for duplicite entries in file thru wc -l
+    echo -e "$1" >> ${Project_name_file}
+    echo -e "$2" >> ${Project_path_file}
 }
 
 remove_project() {
@@ -118,13 +127,6 @@ update_packages() {
     #--force-overwrite install ${some_lib}
 }
 
-install_yocto() {
-    echo -e "[install_yocto]"
-}
-
-install_toolchain() {
-    echo -e "[install_toolchain]"
-}
 
 #########################################################################################
 #                                                                                       #
@@ -144,7 +146,7 @@ case $i in
         ;;
     --project-path=*) CLI_Project_path="${i#*=}"
         ;;
-    --add-project=*) add_project "${i#*=}"
+    --add-project) add_project CLI_Project_name CLI_Project_path
         ;;
     --remove-project=*) remove_project "${i#*=}"
         ;;
@@ -153,10 +155,6 @@ case $i in
     --update-packages=*) update_packages "${i#*=}"
         ;;
     --setup-environment=*) setup_environment "${i#*=}"
-        ;;
-    --install-yocto=*) install_yocto "${i#*=}"
-        ;;
-    --install-toolchain) install_toolchain
         ;;
     *) echo "invalid option ${i}!!!" 
         print_usage
