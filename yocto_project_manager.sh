@@ -34,6 +34,8 @@
 # Usage : run with --help
 #
 
+YOCTOTOOLS_CONFIG_FOLDER="${HOME}/.yoctotools"
+
 
 PROJECTS_name=()
 PROJECTS_path=()
@@ -87,6 +89,11 @@ list_projects() {
     cat ${Project_name_file}
 }
 
+
+add_deployment() {
+	echo -e "adding new deployment folder... $1"
+	echo -e "$1" >> ${YOCTOTOOLS_CONFIG_FOLDER}/deployments
+}
 
 #
 # Parameters:

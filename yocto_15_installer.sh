@@ -63,7 +63,6 @@ install_yocto() {
     if [[ -d ${DEPLOYMENT_FOLDER} ]];then
         echo -e "skipping download... folder ${DEPLOYMENT_FOLDER} already exist"
     else
-        rm -rf ${DEPLOYMENT_FOLDER}
         mkdir ${DEPLOYMENT_FOLDER}
         wget -O ${DEPLOYMENT_FOLDER}/poky-dora-10.0.1.tar.bz2 http://downloads.yoctoproject.org/releases/yocto/yocto-1.5.1/poky-dora-10.0.1.tar.bz2
         cd ${DEPLOYMENT_FOLDER}
