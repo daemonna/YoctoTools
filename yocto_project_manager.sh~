@@ -90,10 +90,6 @@ list_projects() {
 }
 
 
-#
-# Parameters:
-#   deployment_folder
-#
 add_deployment() {
 	echo -e "adding new deployment folder... $1"
     if [[ ! -d ${YOCTOTOOLS_CONFIG_FOLDER} ]];then
