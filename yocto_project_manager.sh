@@ -100,7 +100,25 @@ add_deployment() {
         mkdir -p ${YOCTOTOOLS_CONFIG_FOLDER}
     fi
 
-    echo -e "$1" >> ${YOCTOTOOLS_CONFIG_FOLDER}/deployments
+    # check for duplicate
+    if [[ $(($(cat ${YOCTOTOOLS_CONFIG_FOLDER}/deployments|grep $1|wc -l))) < 1 ]];then
+        echo -e "$1" >> ${YOCTOTOOLS_CONFIG_FOLDER}/deployments
+    else 
+        echo -e "already listed.. skipping"
+    fi
+}
+
+#
+# Parameters:
+#   deployment_folder
+#
+set_default_deployment() {
+    echo -e "setting default deployment to $1"
+    if [[ ! -d ${YOCTOTOOLS_CONFIG_FOLDER} ]];then
+        mkdir -p ${YOCTOTOOLS_CONFIG_FOLDER}
+    fi
+
+    echo -e "$1" >> ${YOCTOTOOLS_CONFIG_FOLDER}/default_deployment
 }
 
 #
@@ -172,6 +190,9 @@ case $i in
     --setup-environment=*) setup_environment "${i#*=}"
         ;;
     --add_deployment=*) add_deployment "${i#*=}"
+        ;;
+    --set-default-deployment=*) set_default_deployment "${i#*=}"
+        ;;
     *) echo "invalid option ${i}!!!" 
         print_usage
         exit 1

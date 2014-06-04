@@ -118,6 +118,24 @@ print_banner() {
     echo -e "Yocto 1.5.1 Installer"
 }
 
+
+interactive_questionare() {
+    echo -e "please specify following values:"
+    echo -e "deployment folder [${DEPLOYMENT_FOLDER}]:"
+    read DF
+    if [[ ! -z ${DF} ]];then
+        DEPLOYMENT_FOLDER="${DF}" 
+        yocto_project_manager.sh --add_deployment="${DEPLOYMENT_FOLDER}"
+        yocto_project_manager.sh --set-default-deployment="${DEPLOYMENT_FOLDER}"
+    fi
+
+    echo -e "do you want to also build Yocto? build can take up to 4 hours..."
+    read BU
+    if [[ ${BU} == "Y" ]];then
+        BUILD="Y" 
+    fi
+}
+
 #########################################################################################
 #                                                                                       #
 # MAIN FUNCTION                                                                         #
@@ -139,6 +157,8 @@ case $i in
     --machines=*) MACHINES="${i#*=}"
         ;;
     --images=*) IMAGES="${i#*=}"
+        ;;
+    --interactive) interactive_questionare
         ;;
     *) echo "invalid option!!!" 
         print_usage
