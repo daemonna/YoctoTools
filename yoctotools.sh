@@ -56,18 +56,16 @@ for i in "${CHOICE}"
 do
 case $i in
     1) echo -e "using yocto_dependency_installer.sh to install all dependencies"
-        yocto_dependency_installer.sh --install-all
+        ./yocto_dependency_installer.sh --install-all
         ;;
     2) echo -e "using yocto_15_isntaller.sh to install Yocto"
-        yocto_15_installer.sh --interactive
+        ./yocto_15_installer.sh --interactive
         ;;
-    3) install_qemu
+    3) echo -e "installing toolchain"
         ;;
-    4) install_nfs 
+    4) echo -e "adding project" 
         ;;
-
     *) echo "invalid option ${i}!!!" 
-        print_usage
         exit 1
         ;;
 esac
